@@ -57,19 +57,20 @@ const playGame = () => {
       computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
 
     //determine the winner!
+    let roundMessage = "";
+
     if (humanChoice === computerChoice) {
-      console.log(`Draw! We both chose ${formattedHumanChoice}!`);
+      roundMessage = `Draw! We both chose ${formattedHumanChoice}!`;
     } else {
+      // Rock beats scissors; paper beats rock; scissors beat paper
       let isHumanWin =
         (humanChoice === "rock" && computerChoice === "scissors") ||
-        (humanChoice === "paper" && computerChoice === "rocks") ||
+        (humanChoice === "paper" && computerChoice === "rock") ||
         (humanChoice === "scissors" && computerChoice === "paper");
 
-      let roundMessage = isHumanWin
+      roundMessage = isHumanWin
         ? `You win! ${formattedHumanChoice} beats ${formattedComputerChoice}!`
         : `You lose! ${formattedComputerChoice} beats ${formattedHumanChoice}!`;
-
-      console.log(roundMessage);
 
       if (isHumanWin) {
         humanScore += 1;
@@ -77,6 +78,8 @@ const playGame = () => {
         computerScore += 1;
       }
     }
+
+    console.log(roundMessage);
 
     return true;
   }
