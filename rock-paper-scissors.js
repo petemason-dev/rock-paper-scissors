@@ -2,53 +2,69 @@ console.log("Hello World");
 
 const validChoices = ["rock", "paper", "scissors"];
 
-const numberRounds = 5;
+const targetScore = 5;
 
 // Randomly pick between rock, paper, scissors
 const getComputerChoice = () => validChoices[Math.floor(Math.random() * 3)];
 
-// get the human choice, and format correctly
-const getHumanChoice = () =>
-  prompt("What is your choice?").trim().toLowerCase();
-
 //play the game
 const playGame = () => {
-  let computerScore = 0;
-  let humanScore = 0;
+  let computerScore, humanScore, roundNumber, gameMessage;
 
-  let roundNumber = 1;
+  const rockButton = document.querySelector("button.rock");
+  rockButton.addEventListener("click", () => playRound("rock"));
+  const paperButton = document.querySelector("button.paper");
+  paperButton.addEventListener("click", () => playRound("paper"));
+  const scissorsButton = document.querySelector("button.scissors");
+  scissorsButton.addEventListener("click", () => playRound("scissors"));
+  const resetButton = document.querySelector("button.reset");
+  resetButton.addEventListener("click", resetGame);
 
-  //play the required number of rounds
-  while (roundNumber <= numberRounds) {
-    //increment the round number if the round was valid
-    roundNumber += playRound(getHumanChoice(), getComputerChoice()) ? 1 : 0;
+  const gameMessageDisplay = document.querySelector("p.message");
+  const roundsList = document.querySelector("ul.rounds");
+
+  resetGame();
+
+  function resetGame() {
+    computerScore = 0;
+    humanScore = 0;
+    roundNumber = 1;
+    gameMessage = "Press a button below to make your move!";
+    gameMessageDisplay.textContent = gameMessage;
+    roundsList.replaceChildren();
+    resetButton.classList.add("hidden");
+    rockButton.removeAttribute("disabled");
+    paperButton.removeAttribute("disabled");
+    scissorsButton.removeAttribute("disabled");
   }
 
-  //declare a winner
-  let gameMessage;
+  function isGameWin() {
+    let isWin = false;
+    let winText = "";
 
-  if (humanScore === computerScore) {
-    gameMessage = "Draw!";
-  } else if (humanScore > computerScore) {
-    gameMessage = "You win!";
-  } else {
-    gameMessage = "I win!";
+    if (humanScore >= targetScore || computerScore >= targetScore) {
+      if (humanScore === computerScore) {
+        winText = "Draw!";
+      } else if (humanScore > computerScore) {
+        winText = "You win!";
+      } else {
+        winText = "I win!";
+      }
+
+      isWin = true;
+      gameMessage = `${winText} You scored ${humanScore}, and I scored ${computerScore}.`;
+    } else {
+      gameMessage = `Your score: ${humanScore} - My score: ${computerScore}`;
+    }
+
+    return isWin;
   }
-
-  console.log(
-    `${gameMessage} You scored ${humanScore}, and I scored ${computerScore}.`
-  );
 
   //play a round
-  //return true if the round was valid
   //increment the human or computer score as appropriate
   // (a draw awards no points)
-  function playRound(humanChoice, computerChoice) {
-    //FIRST check that the human choice is valid
-    if (!validChoices.includes(humanChoice)) {
-      console.log("You must choose either rock, paper or scissors!");
-      return false;
-    }
+  function playRound(humanChoice) {
+    computerChoice = getComputerChoice();
 
     //capitalise the first letter of each choice for display purposes
     const formattedHumanChoice =
@@ -56,11 +72,11 @@ const playGame = () => {
     const formattedComputerChoice =
       computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
 
-    //determine the winner!
-    let roundMessage = "";
+    //determine the round winner!
+    let roundMessage = `Round ${roundNumber}: `;
 
     if (humanChoice === computerChoice) {
-      roundMessage = `Draw! We both chose ${formattedHumanChoice}!`;
+      roundMessage += `Draw! We both chose ${formattedHumanChoice}!`;
     } else {
       // Rock beats scissors; paper beats rock; scissors beat paper
       let isHumanWin =
@@ -68,7 +84,7 @@ const playGame = () => {
         (humanChoice === "paper" && computerChoice === "rock") ||
         (humanChoice === "scissors" && computerChoice === "paper");
 
-      roundMessage = isHumanWin
+      roundMessage += isHumanWin
         ? `You win! ${formattedHumanChoice} beats ${formattedComputerChoice}!`
         : `You lose! ${formattedComputerChoice} beats ${formattedHumanChoice}!`;
 
@@ -79,8 +95,23 @@ const playGame = () => {
       }
     }
 
-    console.log(roundMessage);
+    //display the roundMessage
+    const li = document.createElement("li");
+    li.textContent = roundMessage;
+    roundsList.appendChild(li);
 
+    //check for win
+    if (isGameWin()) {
+      //disable the buttons
+      rockButton.setAttribute("disabled", "");
+      paperButton.setAttribute("disabled", "");
+      scissorsButton.setAttribute("disabled", "");
+
+      //show the reset button
+      resetButton.classList.remove("hidden");
+    }
+    gameMessageDisplay.textContent = gameMessage;
+    roundNumber += 1;
     return true;
   }
 };

@@ -5,9 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rock Paper Scissors</title>
     <script src="rock-paper-scissors.js"></script>
+    <style>
+      .actions {
+        display: flex;
+        gap: 10px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <h1>Rock Paper Scissors</h1>
+    <p class="message">X</p>
+    <button class="reset">Play again!</button>
+    <div class="actions">
+      <button class="rock" disabled>Rock</button>
+      <button class="paper" disabled>Paper</button>
+      <button class="scissors" disabled>Scissors</button>
+    </div>
+    <ul class="rounds"></ul>
 
     <script>
       playGame();
